@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>モルックリケット</title>
+
+<style>
+
+:root{
+
+  /* LIGHT */
+
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --sub:#dbe4ee;
+  --txt:#111827;
+
+  --ca:#dc2626;
+  --cb:#2563eb;
+
+  --green:#16a34a;
+
+  --flat:#cbd5e1;
+  --one:#3b82f6;
+  --open:#22c55e;
+  --closed:#ef4444;
+
+  --notice-bg:#fed7aa;
+  --notice-txt:#7c2d12;
+
+  --shadow:0 4px 14px rgba(0,0,0,.08);
+
+  --mark-a-light:#fecaca;
+  --mark-b-light:#bfdbfe;
+  --closed-gray:#6b7280;
+  --closed-num:#9ca3af;
+  --action-yellow:#facc15;
+  --action-yellow-text:#111827;
+
+}
+
+body.dark{
+
+  --bg:#0f172a;
+  --card:#1e293b;
+  --sub:#334155;
+  --txt:#f8fafc;
+
+  --ca:#ef4444;
+  --cb:#3b82f6;
+
+  --green:#22c55e;
+
+  --flat:#475569;
+  --one:#2563eb;
+  --open:#22c55e;
+  --closed:#ef4444;
+
+  --notice-bg:#7c2d12;
+  --notice-txt:#fed7aa;
+
+  --shadow:0 4px 16px rgba(0,0,0,.25);
+
+  --mark-a-light:#7f1d1d;
+  --mark-b-light:#1e3a8a;
+  --closed-gray:#374151;
+  --closed-num:#9ca3af;
+  --action-yellow:#eab308;
+  --action-yellow-text:#111827;
+
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition:.2s;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:12px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:22px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+
+.title{
+  text-align:center;
+  font-size:30px;
+  font-weight:900;
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:16px;
+  font-size:18px;
+  margin-bottom:12px;
+  background:var(--sub);
+  color:var(--txt);
+}
+
+button{
+  border:none;
+  border-radius:16px;
+  padding:16px;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.15s;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.primary{
+  background:var(--green);
+  color:white;
+}
+
+.secondary{
+  background:var(--sub);
+  color:var(--txt);
+}
+
+.danger{
+  background:var(--cb);
+  color:white;
+}
+
+.large-btn{
+  width:100%;
+  min-height:64px;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--bg);
+  padding-bottom:8px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:10px;
+}
+
+.theme-btn{
+  background:var(--card);
+  color:var(--txt);
+  border-radius:14px;
+  padding:10px 16px;
+  font-size:15px;
+  font-weight:800;
+  box-shadow:var(--shadow);
+}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+
+.status-box{
+  background:var(--card);
+  border-radius:18px;
+  padding:10px;
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+
+.status-label{
+  font-size:12px;
+  opacity:.7;
+}
+
+.status-value{
+  font-size:22px;
+  font-weight:900;
+}
+
+.current-a{
+  color:var(--ca);
+}
+
+.current-b{
+  color:var(--cb);
+}
+
+.scoreboard{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.score-box{
+  border-radius:18px;
+  padding:14px;
+  text-align:center;
+  color:white;
+}
+
+.score-a{
+  background:var(--ca);
+}
+
+.score-b{
+  background:var(--cb);
+}
+
+.score-name{
+  font-size:18px;
+  font-weight:700;
+}
+
+.score-value{
+  font-size:34px;
+  font-weight:900;
+}
+
+.notice{
+  background:var(--notice-bg);
+  color:var(--notice-txt);
+  padding:12px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:800;
+  margin-bottom:12px;
+}
+
+.section-title{
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.skittle-board{
+  display:grid;
+  grid-template-columns:1fr 60px 1fr;
+  gap:8px;
+  align-items:center;
+}
+
+.mark{
+  border-radius:14px;
+  padding:10px;
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+}
+
+.flat{
+  background:var(--flat);
+}
+
+.one{
+  background:var(--one);
+  color:white;
+}
+
+.open{
+  background:var(--open);
+  color:black;
+}
+
+.closed{
+  background:var(--closed-gray);
+  color:white;
+}
+
+.one-a{
+  background:var(--mark-a-light);
+  color:#111;
+}
+
+.one-b{
+  background:var(--mark-b-light);
+  color:#111;
+}
+
+.open-a{
+  background:var(--ca);
+  color:white;
+}
+
+.open-b{
+  background:var(--cb);
+  color:white;
+}
+
+.action-btn{
+  background:var(--action-yellow);
+  color:var(--action-yellow-text);
+}
+
+.center-num{
+  text-align:center;
+  font-size:26px;
+  font-weight:900;
+}
+
+.center-num.closed-num{
+  color:var(--closed-num);
+}
+
+.number-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.num-btn{
+  background:var(--sub);
+  color:var(--txt);
+  min-height:60px;
+}
+
+.selected{
+  outline:4px solid var(--green);
+}
+
+.toggle-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.confirm-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:18px;
+}
+
+.confirm-box{
+  width:100%;
+  max-width:440px;
+  background:var(--card);
+  border-radius:24px;
+  padding:20px;
+}
+
+.confirm-text{
+  font-size:20px;
+  line-height:1.6;
+  white-space:pre-line;
+}
+
+.confirm-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+
+.winner{
+  font-size:34px;
+  font-weight:900;
+  text-align:center;
+  margin-bottom:14px;
+}
+
+.stats{
+  background:var(--bg);
+  border-radius:18px;
+  padding:14px;
+  margin-top:14px;
+}
+
+.stat-line{
+  margin-bottom:14px;
+  line-height:1.7;
+}
+
+.undo-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.small{
+  font-size:14px;
+  opacity:.8;
+}
+
+@media(max-width:600px){
+
+  .score-value{
+    font-size:28px;
+  }
+
+  .center-num{
+    font-size:22px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- SETUP -->
+
+  <div id="setupScreen">
+
+    <div class="topbar">
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+        🌙 ダーク
+      </button>
+    </div>
+
+    <div class="card">
+
+      <div class="title">
+        🎯 モルックリケット
+      </div>
+
+      <input id="playerAInput" placeholder="プレイヤーA / チーム名">
+
+      <input id="playerBInput" placeholder="プレイヤーB / チーム名">
+
+      <button class="primary large-btn" onclick="startGame()">
+        ゲーム開始
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- GAME -->
+
+  <div id="gameScreen" class="hidden">
+
+    <div class="header">
+
+      <div class="topbar">
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn2">
+          🌙 ダーク
+        </button>
+      </div>
+
+      <div class="status-grid">
+
+        <div class="status-box">
+          <div class="status-label">ターン</div>
+          <div class="status-value" id="turnText"></div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-label">投擲</div>
+          <div class="status-value">
+            <span id="playerText"></span>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-label">現在</div>
+          <div class="status-value">
+            <span id="throwText"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="scoreboard">
+
+        <div class="score-box score-a">
+          <div class="score-name" id="scoreAName"></div>
+          <div class="score-value" id="scoreA"></div>
+        </div>
+
+        <div class="score-box score-b">
+          <div class="score-name" id="scoreBName"></div>
+          <div class="score-value" id="scoreB"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="specialNotice" class="notice hidden">
+      先攻1ターン目特殊ルール中<br>
+      マークなし / 倒した本数が得点
+    </div>
+
+    <!-- BOARD -->
+
+    <div class="card">
+
+      <div class="section-title">
+        スキットル状況
+      </div>
+
+      <div class="skittle-board" id="board"></div>
+
+    </div>
+
+    <!-- SINGLE -->
+
+    <div class="card">
+
+      <div class="section-title">
+        ① 単品的中
+      </div>
+
+      <div class="number-grid" id="singleGrid"></div>
+
+      <div class="toggle-grid">
+
+        <button class="secondary" id="normalBtn" onclick="selectHitType('normal')">
+          通常<br>
+          <span class="small">1マーク</span>
+        </button>
+
+        <button class="secondary" id="directBtn" onclick="selectHitType('direct')">
+          直当て<br>
+          <span class="small">2マーク</span>
+        </button>
+
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="action-btn large-btn" onclick="confirmSingle()">
+          単品入力を確定
+        </button>
+      </div>
+
+    </div>
+
+    <!-- MULTI -->
+
+    <div class="card">
+
+      <div class="section-title">
+        ② 複数本的中
+      </div>
+
+      <div class="small" style="margin-bottom:12px;">
+        倒したスキットルを全て選択
+      </div>
+
+      <div class="number-grid" id="multiGrid"></div>
+
+      <div style="margin-top:12px;">
+        <button class="action-btn large-btn" onclick="confirmMulti()">
+          複数本入力を確定
+        </button>
+      </div>
+
+    </div>
+
+    <!-- MISS -->
+
+    <div class="card">
+
+      <div class="section-title">
+        ③ ミス / 0点
+      </div>
+
+      <button class="action-btn large-btn" onclick="quickMiss()">
+        MISS / 0点
+      </button>
+
+    </div>
+
+    <!-- CONTROL -->
+
+    <div class="undo-wrap">
+
+      <button class="secondary large-btn" onclick="confirmUndo()">
+        ↩ ひとつ前に戻る
+      </button>
+
+      <button class="action-btn large-btn" onclick="confirmReset()">
+        リセット
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CONFIRM -->
+
+<div class="confirm-overlay hidden" id="confirmModal">
+
+  <div class="confirm-box">
+
+    <div class="confirm-text" id="confirmText"></div>
+
+    <div class="confirm-buttons">
+
+      <button class="secondary" onclick="closeConfirm()">
+        いいえ
+      </button>
+
+      <button class="primary" onclick="executePending()">
+        はい
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- RESULT -->
+
+<div class="confirm-overlay hidden" id="winnerModal">
+
+  <div class="confirm-box">
+
+    <div class="winner" id="winnerText"></div>
+
+    <div id="statsArea"></div>
+
+    <button class="secondary large-btn" onclick="undoFromWinner()" style="margin-top:16px;">
+      ↩ ひとつ前に戻る
+    </button>
+
+    <button class="primary large-btn" onclick="location.reload()" style="margin-top:16px;">
+      新しいゲーム
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+const nums=[6,7,8,9,10,11,12];
+
+let players=[
+  {
+    name:"",
+    score:0,
+    marks:{},
+    totalMarks:0,
+    throws:0,
+    currentMiss:0,
+    maxMiss:0
+  },
+  {
+    name:"",
+    score:0,
+    marks:{},
+    totalMarks:0,
+    throws:0,
+    currentMiss:0,
+    maxMiss:0
+  }
+];
+
+nums.forEach(n=>{
+  players[0].marks[n]=0;
+  players[1].marks[n]=0;
+});
+
+let turn=1;
+let currentPlayer=0;
+let throwNum=1;
+
+let selectedSingle=null;
+let selectedHitType=null;
+let selectedMulti=[];
+
+let pendingAction=null;
+
+let history=[];
+
+let statHistory=[];
+let statFreezeIndex=null;
+
+
+/* THEME */
+
+function toggleTheme(){
+
+  document.body.classList.toggle("dark");
+
+  const dark=document.body.classList.contains("dark");
+
+  const txt=dark ? "☀ ライト" : "🌙 ダーク";
+
+  const btn1=document.getElementById("themeBtn");
+  const btn2=document.getElementById("themeBtn2");
+
+  if(btn1) btn1.innerText=txt;
+  if(btn2) btn2.innerText=txt;
+}
+
+/* START */
+
+function startGame(){
+
+  players[0].name=document.getElementById("playerAInput").value.trim() || "プレイヤーA";
+  players[1].name=document.getElementById("playerBInput").value.trim() || "プレイヤーB";
+
+  document.getElementById("setupScreen").classList.add("hidden");
+  document.getElementById("gameScreen").classList.remove("hidden");
+
+  createButtons();
+  updateUI();
+}
+
+/* BUTTONS */
+
+function createButtons(){
+
+  const single=document.getElementById("singleGrid");
+  const multi=document.getElementById("multiGrid");
+
+  nums.forEach(n=>{
+
+    const b1=document.createElement("button");
+    b1.className="num-btn";
+    b1.innerText=n;
+    b1.onclick=()=>selectSingle(n,b1);
+    single.appendChild(b1);
+
+    const b2=document.createElement("button");
+    b2.className="num-btn";
+    b2.innerText=n;
+    b2.onclick=()=>toggleMulti(n,b2);
+    multi.appendChild(b2);
+
+  });
+
+}
+
+function selectSingle(n,btn){
+
+  selectedSingle=n;
+
+  document.querySelectorAll("#singleGrid button").forEach(b=>{
+    b.classList.remove("selected");
+  });
+
+  btn.classList.add("selected");
+}
+
+function selectHitType(type){
+
+  selectedHitType=type;
+
+  document.getElementById("normalBtn").classList.remove("selected");
+  document.getElementById("directBtn").classList.remove("selected");
+
+  if(type==="normal"){
+    document.getElementById("normalBtn").classList.add("selected");
+  }else{
+    document.getElementById("directBtn").classList.add("selected");
+  }
+
+}
+
+function toggleMulti(n,btn){
+
+  if(selectedMulti.includes(n)){
+
+    selectedMulti=selectedMulti.filter(x=>x!==n);
+    btn.classList.remove("selected");
+
+  }else{
+
+    selectedMulti.push(n);
+    btn.classList.add("selected");
+
+  }
+
+}
+
+/* CONFIRM */
+
+function openConfirm(text,callback){
+
+  pendingAction=callback;
+
+  document.getElementById("confirmText").innerText=text;
+
+  document.getElementById("confirmModal")
+    .classList.remove("hidden");
+
+}
+
+function closeConfirm(){
+
+  document.getElementById("confirmModal")
+    .classList.add("hidden");
+
+}
+
+function executePending(){
+
+  closeConfirm();
+
+  if(pendingAction){
+    pendingAction();
+  }
+
+}
+
+/* ACTION CONFIRM */
+
+function confirmSingle(){
+
+  if(selectedSingle===null || !selectedHitType){
+    alert("入力してください");
+    return;
+  }
+
+  openConfirm(
+`${players[currentPlayer].name}
+
+単品的中
+
+対象: ${selectedSingle}
+${selectedHitType==="direct" ? "直当て(2マーク)" : "通常(1マーク)"}
+
+で確定しますか？`,
+()=>processSingle(selectedSingle,selectedHitType)
+  );
+
+}
+
+function confirmMulti(){
+
+  if(selectedMulti.length===0){
+    alert("選択してください");
+    return;
+  }
+
+  openConfirm(
+`${players[currentPlayer].name}
+
+複数本的中
+
+${selectedMulti.join(", ")}
+
+で確定しますか？`,
+()=>processMulti([...selectedMulti])
+  );
+
+}
+
+function quickMiss(){
+
+  openConfirm(
+`${players[currentPlayer].name}
+
+MISS / 0点
+
+で確定しますか？`,
+()=>{
+
+  saveHistory();
+
+  const p=players[currentPlayer];
+
+  p.throws++;
+
+  p.currentMiss++;
+
+  if(p.currentMiss > p.maxMiss){
+    p.maxMiss=p.currentMiss;
+  }
+
+  recordStatSnapshot();
+  nextThrow();
+
+});
+}
+
+/* UNDO / RESET CONFIRM */
+
+function confirmUndo(){
+
+  openConfirm(
+`本当に1手戻りますか？`,
+()=>undo()
+  );
+
+}
+
+function confirmReset(){
+
+  openConfirm(
+`本当に試合をリセットしますか？`,
+()=>location.reload()
+  );
+
+}
+
+/* HISTORY */
+
+function saveHistory(){
+
+  history.push(JSON.stringify({
+    players,
+    turn,
+    currentPlayer,
+    throwNum
+  }));
+
+}
+
+function undoFromWinner(){ document.getElementById("winnerModal").classList.add("hidden"); undo(); }
+
+function undo(){
+
+  if(history.length===0){
+    alert("戻れる履歴がありません");
+    return;
+  }
+
+  const prev=JSON.parse(history.pop());
+
+  players=prev.players;
+  turn=prev.turn;
+  currentPlayer=prev.currentPlayer;
+  throwNum=prev.throwNum;
+
+  updateUI();
+}
+
+/* RULE */
+
+function isSpecialRule(){
+
+  return turn===1 && currentPlayer===0;
+
+}
+
+/* SINGLE */
+
+function processSingle(num,type){
+
+  saveHistory();
+
+  const p=players[currentPlayer];
+  const e=players[1-currentPlayer];
+
+  const value=type==="direct" ? 2 : 1;
+
+  p.throws++;
+
+  if(isSpecialRule()){
+
+    p.score += value;
+    p.currentMiss=0;
+
+    recordStatSnapshot();
+    nextThrow();
+    return;
+  }
+
+  p.totalMarks += value;
+
+  /* 最重要バグ修正 */
+
+  if(
+    type==="direct" &&
+    p.marks[num]===1 &&
+    e.marks[num]>=2
+  ){
+
+    p.marks[num]=2;
+    e.marks[num]=2;
+
+    p.currentMiss=0;
+
+    recordStatSnapshot();
+    nextThrow();
+    return;
+  }
+
+  let remain=value;
+
+  if(p.marks[num] < 2){
+
+    const need=2-p.marks[num];
+    const use=Math.min(need,remain);
+
+    p.marks[num]+=use;
+    remain-=use;
+  }
+
+  if(
+    remain>0 &&
+    p.marks[num]>=2 &&
+    e.marks[num]<2
+  ){
+
+    p.score += num * remain;
+    remain=0;
+  }
+
+  if(
+    remain>0 &&
+    e.marks[num]>=2
+  ){
+
+    e.marks[num]-=remain;
+
+    if(e.marks[num]<0){
+      e.marks[num]=0;
+    }
+
+    remain=0;
+  }
+
+  if(
+    p.marks[num]>=2 &&
+    e.marks[num]>=2
+  ){
+
+    p.marks[num]=2;
+    e.marks[num]=2;
+  }
+
+  p.currentMiss=0;
+
+  recordStatSnapshot();
+  nextThrow();
+}
+
+/* MULTI */
+
+function processMulti(list){
+
+  saveHistory();
+
+  const p=players[currentPlayer];
+  const e=players[1-currentPlayer];
+
+  p.throws++;
+
+  if(isSpecialRule()){
+
+    p.score += list.length;
+    p.currentMiss=0;
+
+    recordStatSnapshot();
+    nextThrow();
+    return;
+  }
+
+  p.totalMarks += list.length;
+
+  let scoreCount=0;
+
+  list.forEach(num=>{
+
+    if(
+      p.marks[num]>=2 &&
+      e.marks[num]<2
+    ){
+
+      scoreCount++;
+
+    }else{
+
+      if(p.marks[num]<2){
+
+        p.marks[num]+=1;
+
+      }else if(e.marks[num]>=2){
+
+        e.marks[num]-=1;
+
+        if(e.marks[num]<0){
+          e.marks[num]=0;
+        }
+
+      }
+
+    }
+
+    if(
+      p.marks[num]>=2 &&
+      e.marks[num]>=2
+    ){
+
+      p.marks[num]=2;
+      e.marks[num]=2;
+    }
+
+  });
+
+  p.score += scoreCount;
+
+  p.currentMiss=0;
+
+  recordStatSnapshot();
+  nextThrow();
+}
+
+/* TURN */
+
+function nextThrow(){
+
+  resetSelections();
+
+  if(checkColdWin()){
+    return;
+  }
+
+  if(throwNum===2){
+
+    throwNum=1;
+
+    if(currentPlayer===1){
+
+      currentPlayer=0;
+      turn++;
+
+      if(turn>12){
+
+        finishGame();
+        return;
+      }
+
+    }else{
+
+      currentPlayer=1;
+
+    }
+
+  }else{
+
+    throwNum=2;
+
+  }
+
+  updateUI();
+}
+
+function resetSelections(){
+
+  selectedSingle=null;
+  selectedHitType=null;
+  selectedMulti=[];
+
+  document.querySelectorAll(".selected").forEach(el=>{
+    el.classList.remove("selected");
+  });
+
+}
+
+/* UI */
+
+function getStatus(mine,enemy,player){
+
+  if(mine>=2 && enemy>=2){
+    return ["CLOSED","closed"];
+  }
+
+  if(mine>=2){
+    return ["OPEN",player===0 ? "open-a" : "open-b"];
+  }
+
+  if(mine===1){
+    return ["1 MARK",player===0 ? "one-a" : "one-b"];
+  }
+
+  return ["FLAT","flat"];
+}
+
+function updateUI(){
+
+  document.getElementById("turnText").innerText=turn;
+
+  const pName=document.getElementById("playerText");
+  const tText=document.getElementById("throwText");
+
+  pName.innerText=players[currentPlayer].name;
+  tText.innerText=`${throwNum}投目`;
+
+  pName.className=currentPlayer===0 ? "current-a" : "current-b";
+  tText.className=currentPlayer===0 ? "current-a" : "current-b";
+
+  document.getElementById("scoreAName").innerText=players[0].name;
+  document.getElementById("scoreBName").innerText=players[1].name;
+
+  document.getElementById("scoreA").innerText=players[0].score;
+  document.getElementById("scoreB").innerText=players[1].score;
+
+  document.getElementById("specialNotice")
+    .classList.toggle("hidden",!isSpecialRule());
+
+  const board=document.getElementById("board");
+
+  board.innerHTML="";
+
+  nums.forEach(num=>{
+
+    const a=players[0].marks[num];
+    const b=players[1].marks[num];
+
+    const left=getStatus(a,b,0);
+    const right=getStatus(b,a,1);
+
+    const closedClass=(a>=2 && b>=2) ? "closed-num" : "";
+
+    board.innerHTML += `
+      <div class="mark ${left[1]}">${left[0]}</div>
+      <div class="center-num ${closedClass}">${num}</div>
+      <div class="mark ${right[1]}">${right[0]}</div>
+    `;
+
+  });
+
+}
+
+/* WIN */
+
+function allOpened(player){
+
+  return nums.every(n=>player.marks[n]>=2);
+
+}
+
+function checkColdWin(){
+
+  for(let i=0;i<2;i++){
+
+    const p=players[i];
+    const e=players[1-i];
+
+    if(
+      allOpened(p) &&
+      p.score >= e.score
+    ){
+
+      showWinner(`
+🏆 勝利！ 🏆
+<br>
+${p.name}
+`);
+
+      return true;
+    }
+
+  }
+
+  return false;
+}
+
+function finishGame(){
+
+  if(players[0].score > players[1].score){
+
+    showWinner(`
+🏆 勝利！ 🏆
+<br>
+${players[0].name}
+`);
+
+  }else if(players[1].score > players[0].score){
+
+    showWinner(`
+🏆 勝利！ 🏆
+<br>
+${players[1].name}
+`);
+
+  }else{
+
+    showWinner(`
+🤝 引き分け 🤝
+`);
+
+  }
+
+}
+
+
+function countOpened(player){
+  return nums.filter(n=>player.marks[n]>=2).length;
+}
+
+function recordStatSnapshot(){
+  statHistory.push(JSON.parse(JSON.stringify(players)));
+  if(statFreezeIndex!==null) return;
+  if(countOpened(players[0])>=6 || countOpened(players[1])>=6){
+    statFreezeIndex=statHistory.length-1;
+  }
+}
+
+function getStatsPlayers(){
+  if(statFreezeIndex===null || !statHistory[statFreezeIndex]) return players;
+  return statHistory[statFreezeIndex];
+}
+
+/* STATS */
+
+
+function createStatsHTML(){
+
+  const s=getStatsPlayers();
+
+  const avgA=s[0].throws===0 ? 0 : (s[0].totalMarks/(s[0].throws/2)).toFixed(2);
+  const avgB=s[1].throws===0 ? 0 : (s[1].totalMarks/(s[1].throws/2)).toFixed(2);
+
+  return `
+    <div class="stats">
+      <h3>📊 試合スタッツ</h3>
+
+      <div class="stat-line">
+        <strong>${s[0].name}</strong><br>
+        平均マーク数(1ターンあたり): ${avgA}<br>
+        最大連続MISS: ${s[0].maxMiss}
+      </div>
+
+      <div class="stat-line">
+        <strong>${s[1].name}</strong><br>
+        平均マーク数(1ターンあたり): ${avgB}<br>
+        最大連続MISS: ${s[1].maxMiss}
+      </div>
+    </div>
+  `;
+}
+
+function showWinner(text){
+
+  document.getElementById("winnerText").innerHTML=text;
+
+  document.getElementById("statsArea").innerHTML=createStatsHTML();
+
+  document.getElementById("winnerModal")
+    .classList.remove("hidden");
+
+}
+
+</script>
+
+</body>
+</html>
