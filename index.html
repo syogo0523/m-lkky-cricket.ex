@@ -1425,14 +1425,37 @@ function allOpened(player){
 }
  
 function checkColdWin(){
-  for(let i = 0; i < 2; i++){
-    const p = players[i];
-    const e = players[1 - i];
-    if(allOpened(p) && p.score >= e.score){
+  // 今投げ終えたプレイヤーを p、相手を e として定義（全判定でこれを軸にする）
+  const p = players[currentPlayer];
+  const e = players[1 - currentPlayer];
+
+  // ── 優先度1：両プレイヤーが全オープン（すべてのスキットルがクローズ）──
+  // p/e の視点でスコアを比較することで、誰が投げた直後かに関わらず正確に判定する
+  if(allOpened(p) && allOpened(e)){
+    if(p.score > e.score){
+      // 今投げたプレイヤーのスコアが上 → そのプレイヤーの勝利
+      showWinner(`🏆 WINNER 🏆<br>${p.name}`);
+    } else if(e.score > p.score){
+      // 相手のスコアが上 → 相手の勝利
+      showWinner(`🏆 WINNER 🏆<br>${e.name}`);
+    } else {
+      // 完全同点 → 絶対にドロー
+      showWinner(`🤝 DRAW 🤝`);
+    }
+    return true;
+  }
+
+  // ── 優先度2：今投げ終えたプレイヤーだけが全オープンを達成したか ──
+  // 相手はまだ全オープンしていない状態での個別チェック
+  if(allOpened(p)){
+    if(p.score > e.score){
+      // 全オープン達成、かつスコアが相手を確実に上回っている → コールド勝利
       showWinner(`🏆 WINNER 🏆<br>${p.name}`);
       return true;
     }
+    // 同点、または負けている場合 → 相手にまだチャンスがあるのでゲーム続行
   }
+
   return false;
 }
  
@@ -1442,7 +1465,17 @@ function finishGame(){
   } else if(players[1].score > players[0].score){
     showWinner(`🏆 WINNER 🏆<br>${players[1].name}`);
   } else {
-    showWinner(`🤝 DRAW 🤝`);
+    // スコア同点 → タイブレーク：オープンスキットル数で比較
+    const openA = countOpened(players[0]);
+    const openB = countOpened(players[1]);
+    if(openA > openB){
+      showWinner(`🏆 WINNER 🏆<br>${players[0].name}`);
+    } else if(openB > openA){
+      showWinner(`🏆 WINNER 🏆<br>${players[1].name}`);
+    } else {
+      // スコアもオープン数も同じ → ドロー
+      showWinner(`🤝 DRAW 🤝`);
+    }
   }
 }
  
