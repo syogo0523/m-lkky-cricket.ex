@@ -992,18 +992,18 @@ button:active{ transform:scale(.97); }
       
       <div class="menu-list">
         <button class="menu-item-btn" onclick="openSetup('normal')">
-          <div class="menu-item-title">① クイックマッチ</div>
-          <div class="menu-item-desc">従来の1試合（12ターン）完結形式です。手軽に1ゲームを楽しみたいときはこちら。</div>
+          <div class="menu-item-title">① 1試合対戦</div>
+          <div class="menu-item-desc">1試合完結形式です。手軽に1ゲームを楽しみたいときはこちら。</div>
         </button>
         
         <button class="menu-item-btn" onclick="openSetup('match')">
-          <div class="menu-item-title">② セットマッチ</div>
-          <div class="menu-item-desc">2本先取、3本先取などのセットマッチ形式。セットごとの投げ順選択や履歴スタッツに対応。</div>
+          <div class="menu-item-title">② セット対戦</div>
+          <div class="menu-item-desc">2本先取、3本先取などのセット先取形式です。本格的に対戦をしたいときはこちら。</div>
         </button>
         
         <button class="menu-item-btn" onclick="switchScreen('ruleScreen')">
-          <div class="menu-item-title">③ ルール＆ガイド</div>
-          <div class="menu-item-desc">モルックリケットの基本ルール、得点計算、あるいは勝利に近づくための3大セオリーを解説。</div>
+          <div class="menu-item-title">③ ルール解説</div>
+          <div class="menu-item-desc">モルックリケットの基本ルール、得点計算、セオリーを解説。</div>
         </button>
       </div>
     </div>
@@ -1211,18 +1211,46 @@ button:active{ transform:scale(.97); }
 
       <div class="rule-block">
         <div class="rule-h3">2. オープンとクローズ</div>
-        <p class="rule-p">何もされていない状態（フラット）のスキットルに指定数のマークを的中させると、自分の陣地にできます。これを<b>オープン</b>と言います。</p>
-        <p class="rule-p">相手がオープンしているスキットルに自分も指定数のマークを的中させると、そのスキットルを潰すことができます。これを<b>クローズ</b>と言います。クローズされたスキットルは盤面から完全に除外され、両者ともに加点できなくなります。</p>
+        <p class="rule-p">何もされていない状態（フラット）のスキットルに2マーク的中させると、自分の陣地にできます。これを<b>オープン</b>と言います。</p>
+        <p class="rule-p">相手がオープンしているスキットルに自分も2マーク的中させると、そのスキットルを潰すことができます。これを<b>クローズ</b>と言います。クローズされたスキットルは盤面から完全に除外され、両者ともに加点できなくなります。</p>
+        <div class="rule-p" style="padding-left: 8px; border-left: 2px dashed var(--border); font-weight: bold; color: var(--green);">
+          マークのイメージ:<br>
+          ⚪️ フラット ➔ 🟡 1マーク ➔ 🟢 オープン（自分陣地） ➔ 🔴 クローズ（無効化）
+        </div>
+      </div>
+
+      <div class="rule-block">
+        <div class="rule-h3">3. 得点の取り方</div>
+        <p class="rule-p">オープン状態のスキットルに当てることで、そのスキットルの数字が得点になります。直当て（DOUBLE）の場合は2倍の点数が入ります。1マーク状態で直当てした場合、1マークはオープンに使用され、残りの1マーク分で1倍の得点が入ります。</p>
       </div>
 
       <div class="rule-block">
         <div class="rule-h3">4. 複数本倒した場合（MULTI HIT）</div>
-        <p class="rule-p">倒したスキットルのうち、自分がすでにオープンしているスキットルがある場合、その「スキットルの本数（1本＝1点）」がそのまま合計点数として加算されます。</p>
+        <p class="rule-p">倒したスキットルのうち、自分がすでにオープンしているスキットルがある場合、その「スキットルの本数」がそのまま合計点数として加算されます。</p>
+        <p class="rule-p">倒したスキットルの中にフラット、もしくは相手のみがオープンしているスキットルが含まれている場合は、それらのスキットルすべてに1マークを付与できます。</p>
       </div>
 
-      <button class="primary large-btn" onclick="backToTopMenu()" style="margin-top: 10px;">トップメニューに戻る</button>
-    </div>
-  </div>
+      <div class="rule-block">
+        <div class="rule-h3">5. 先攻の1ターン目特別ルール</div>
+        <p class="rule-p">先攻の1ターン目の2投のみ、どのスキットルに当ててもマーク処理は一切行われず、「倒した本数」がそのままダイレクトに合計得点に加算される特殊ルールが適用されます。</p>
+      </div>
+
+      <div class="rule-block">
+        <div class="rule-h3">✨ 勝つための3大セオリー</div>
+        <div class="theory-box">
+          <b>💡 数字の大きいスキットルから狙う</b><br>
+          11番や12番といった高得点スキットルを早期にオープンすることで、その後の加点フェーズで有利に立てます。
+        </div>
+        <div class="theory-box">
+          <b>💡 近いスキットルから狙う</b><br>
+          狙いやすく手前にあるスキットルを確実に仕留めてマークを重ね、着実に自分の陣地を拡大していくことができます。
+        </div>
+        <div class="theory-box">
+          <b>💡 点数を同点以上にしてからクローズにトライする</b><br>
+          勝利の絶対条件は「全オープンした段階でスコアが相手と同点以上であること」です。点数が大きく負けている段階で無理にクローズに手を出すと勝利を確定できないため、まずは点数を捲るか並ぶのが鉄則です。
+        </div>
+      </div>
+
  
 </div>
  
@@ -1389,11 +1417,11 @@ function openSetup(mode) {
   const formatArea = document.getElementById("matchFormatArea");
   
   if (mode === 'match') {
-    mainTitle.innerText = "対戦モード";
+    mainTitle.innerText = "セット対戦";
     subTitle.innerText = "SET MATCH SETTING";
     formatArea.classList.remove("hidden");
   } else {
-    mainTitle.innerText = "クイックマッチ";
+    mainTitle.innerText = "1試合対戦";
     subTitle.innerText = "SINGLE MATCH SETTING";
     formatArea.classList.add("hidden");
   }
