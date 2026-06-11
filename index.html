@@ -726,7 +726,7 @@ button:active{ transform:scale(.97); }
   opacity:.9;
   text-overflow:ellipsis;
   overflow:hidden;
-  white-space:nowrap;
+ white-space:nowrap;
 }
  
 .score-value{
@@ -1250,7 +1250,7 @@ button:active{ transform:scale(.97); }
           勝利の絶対条件は「全オープンした段階でスコアが相手と同点以上であること」です。点数が大きく負けている段階で無理にクローズに手を出すと勝利を確定できないため、まずは点数を捲るか並ぶのが鉄則です。
         </div>
       </div>
-
+    </div>
  
 </div>
  
@@ -1378,7 +1378,7 @@ nums.forEach(n => {
  
 let turn = 1;
 let currentPlayer = 0;
-let setFirstPlayer = 0; // 現在のセットの先攻プレイヤー（0=A, 1=B）を管理
+let setFirstPlayer = 0; 
 let throwNum = 1;
  
 let selectedSingle = null;  
@@ -1506,7 +1506,7 @@ function startGame(){
 function initNewSet(startingPlayerIdx) {
   turn = 1;
   currentPlayer = startingPlayerIdx;
-  setFirstPlayer = startingPlayerIdx; // 新しいセットの先攻プレイヤーを記憶
+  setFirstPlayer = startingPlayerIdx; 
   throwNum = 1;
   
   history = [];
@@ -1522,6 +1522,7 @@ function initNewSet(startingPlayerIdx) {
     p.maxMiss = 0;
     nums.forEach(n => p.marks[n] = 0);
   });
+  resetSelections();
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -1548,14 +1549,11 @@ function buildIntegratedBoardUI(){
 
 function handleSkittleRowClick(num) {
   if (selectedMulti.includes(num)) {
-    // 既に選択されていたら、配列から除外してトグル解除
     selectedMulti = selectedMulti.filter(x => x !== num);
     if (selectedSingle === num) {
-      // シングル選択中だった番号が解除された場合、残りの選択肢から最新のものを補填
       selectedSingle = selectedMulti.length > 0 ? selectedMulti[selectedMulti.length - 1] : null;
     }
   } else {
-    // 新規選択
     selectedMulti.push(num);
     selectedSingle = num; 
   }
@@ -1565,11 +1563,12 @@ function handleSkittleRowClick(num) {
 function syncBoardSelectionUI() {
   nums.forEach(num => {
     const row = document.getElementById(`skRow_${num}`);
-    // 内部配列（selectedMulti）の状態と完全に同期させて枠線のクラスをトグル
-    if (selectedMulti.includes(num)) {
-      row.classList.add("selected");
-    } else {
-      row.classList.remove("selected");
+    if (row) {
+      if (selectedMulti.includes(num)) {
+        row.classList.add("selected");
+      } else {
+        row.classList.remove("selected");
+      }
     }
   });
 }
@@ -1612,7 +1611,6 @@ function executePending(){
    ACTION CONFIRMS & MUTUAL VALIDATION GUARDS
 ═══════════════════════════════════════════════════════ */
 function confirmSingle(){
-  // 複数本選択された状態でシングル確定を押したときのエラーハンドリング
   if (selectedMulti.length > 1) {
     alert("単品ヒット（SINGLE HIT）の場合は、スキットルを1本だけ選択してください。\n複数本的中した場合は『MULTI確定』を押してください。");
     return;
@@ -1644,7 +1642,6 @@ function confirmMulti(){
     return;
   }
 
-  // 1本しか選択されていない状態でマルチ確定を押したときのエラーハンドリング
   if (selectedMulti.length === 1) {
     alert("複数本的中（MULTI HIT）の場合は、スキットルを2本以上選択してください。\n1本のみ的中した場合は『SINGLE確定』を押してください。");
     return;
@@ -1716,7 +1713,7 @@ function isClosed(marksA, marksB, num){
 }
  
 function isSpecialRule(){
-  return turn === 1 && currentPlayer === setFirstPlayer; // 現在のセットの「先攻陣」の最初のターンのみ特例適用
+  return turn === 1 && currentPlayer === setFirstPlayer; 
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -1807,7 +1804,7 @@ function processSingle(num, type){
 }
  
 /* ═══════════════════════════════════════════════════════
-   PROCESS MULTI HIT
+   PROCESS MULTI HIT (修正：オープン本数をそのまま加算)
 ═══════════════════════════════════════════════════════ */
 function processMulti(list){
   saveHistory();
@@ -1841,7 +1838,7 @@ function processMulti(list){
     if(isClosed(p.marks, e.marks, num)) return;
  
     if(isOpen(p.marks, num)){
-      // オープン済みの複数本は「本数分(1本＝1点)」を加点
+      // 【修正箇所】数字(num)ではなく、オープンしているスキットル1本につき「1点」を加算
       if(!isOpen(e.marks, num)) scoreGain += 1; 
       return;
     }
@@ -1874,40 +1871,37 @@ function processMulti(list){
 }
  
 /* ═══════════════════════════════════════════════════════
-   TURN MANAGEMENT (1投目コールド即判定 & 交代時投げ順ロジック完全安定化)
+   TURN MANAGEMENT 
 ═══════════════════════════════════════════════════════ */
 function nextThrow(){
-  resetSelections();
-  updateUI(); 
- 
-  // 課題3: 1投目であっても勝利条件を満たした段階で、2投目を待たず即座にリザルト（resolveSetEnd）へ移行させる
   const isMatchOver = checkColdWinSilent();
   if (isMatchOver) {
-    checkColdWin();
-    return; // 2投目以降の進行をスキップし即モーダル表示へ
+    triggerTurnEndAnimation(() => {
+      checkColdWin();
+    });
+    return; 
   }
 
-  // ターン終了およびプレイヤー交代チェック
   if(throwNum >= cfg.throwsPerTurn){
     triggerTurnEndAnimation(() => {
-      throwNum = 1; // 投球表示をリセット
+      throwNum = 1; 
 
-      // 課題4: 先攻が誰であっても狂わない、厳密な先攻・後攻ターン進行制御
-      // 現在のセットの「後攻プレイヤー（1 - setFirstPlayer）」が投げ終わったときのみ、turnを進める
       if(currentPlayer === (1 - setFirstPlayer)){
-        currentPlayer = setFirstPlayer; // 手番を先攻へ戻す
-        turn++; // ターンを進める
+        currentPlayer = setFirstPlayer; 
+        turn++; 
         if(turn > 12){
           finishGame();
           return;
         }
       } else {
-        currentPlayer = 1 - setFirstPlayer; // 手番を後攻プレイヤーへ進める
+        currentPlayer = 1 - setFirstPlayer; 
       }
+      resetSelections();
       updateUI();
     });
   } else {
     throwNum++;
+    resetSelections();
     updateUI();
   }
 }
@@ -2047,16 +2041,22 @@ function updateUI(){
     const centerEl = document.getElementById(`skCenter_${num}`);
     const rightEl  = document.getElementById(`skRight_${num}`);
     
-    leftEl.innerText = leftData[0];
-    leftEl.className = `mini-mark side-a ${leftData[1]}`;
+    if (leftEl) {
+      leftEl.innerText = leftData[0];
+      leftEl.className = `mini-mark side-a ${leftData[1]}`;
+    }
     
-    rightEl.innerText = rightData[0];
-    rightEl.className = `mini-mark side-b ${rightData[1]}`;
+    if (rightEl) {
+      rightEl.innerText = rightData[0];
+      rightEl.className = `mini-mark side-b ${rightData[1]}`;
+    }
     
-    if(isClosed(players[0].marks, players[1].marks, num)) {
-      centerEl.className = "center-num-btn closed-num";
-    } else {
-      centerEl.className = "center-num-btn";
+    if (centerEl) {
+      if(isClosed(players[0].marks, players[1].marks, num)) {
+        centerEl.className = "center-num-btn closed-num";
+      } else {
+        centerEl.className = "center-num-btn";
+      }
     }
   });
   
@@ -2140,7 +2140,7 @@ function showNextSetModal(winnerIdx) {
 
 function executeNextSet(startingPlayerIdx) {
   document.getElementById("nextSetModal").classList.add("hidden");
-  initNewSet(startingPlayerIdx); // ここで setFirstPlayer も安全に更新されます
+  initNewSet(startingPlayerIdx); 
   updateUI();
 }
 
@@ -2296,7 +2296,7 @@ function saveHistory(){
     players, 
     turn, 
     currentPlayer, 
-    setFirstPlayer, // Undo時の進行のバグを防ぐため先攻情報も保存
+    setFirstPlayer, 
     throwNum,
     throwRecords: JSON.parse(JSON.stringify(throwRecords))
   }));
@@ -2319,6 +2319,7 @@ function undo(){
   if(prev.setFirstPlayer !== undefined) setFirstPlayer = prev.setFirstPlayer;
   throwNum = prev.throwNum;
   if(prev.throwRecords) throwRecords = prev.throwRecords;
+  resetSelections();
   updateUI();
 }
  
